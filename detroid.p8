@@ -5,7 +5,7 @@ __lua__
 -- by cow
 
 function _init()
-  p = { maxhp = 5, hp = 5, sprite = 2, x = 320, y = 72, dx = 0, dy = 0, msp = 2, jsp = 3, isgrounded = false, facing = 1, moving = false, hit = false }
+  p = { maxhp = 5, hp = 5, sprite = 2, x = 72, y = 72, dx = 0, dy = 0, msp = 2, jsp = 3, isgrounded = false, facing = 1, moving = false, hit = false }
   i = { dj = false, djactive = false }
   g = { grav = 0.2 }
   item_list = {{ name = "double jump", x = 360, y = 96}}
@@ -19,6 +19,8 @@ function _init()
   frame = 0
   camera_x = 0
   camera_y = 0
+  draw_text_string = ""
+  draw_text_frame_end = 0
 end
 
 function _update()
@@ -29,7 +31,7 @@ function _update()
 
   -- jump
   v = mget((p.x + 4) / 8, (p.y - 1) / 8)
-  if btnp(4) and (p.wwwg or p.wwg or p.wg or p.isgrounded or i.djactive) and not fget(v, 0) then
+  if btnp(4) and (p.wwwwg or p.wwwg or p.wwg or p.wg or p.isgrounded or i.djactive) and not fget(v, 0) then
     p.dy = -p.jsp
     if i.djactive and not p.isgrounded then
       i.djactive = false
@@ -75,6 +77,7 @@ function _update()
   local v = mget((p.x + 4) / 8,(p.y + 8) / 8)
   -- assume they are floating
   -- until we see otherwise
+  p.wwwwg = p.wwwg
   p.wwwg = p.wwg
   p.wwg = p.wasgrounded
   p.wg = p.isgrounded
@@ -150,6 +153,8 @@ function update_special_items()
       if item.name == "double jump" then
         i.dj = true
         i.djactive = true
+        draw_text_string = "  double jump core (\x97+\x97)"
+        draw_text_frame_end = frame + 30
       end
       del(item_list, item)
     end
@@ -290,6 +295,14 @@ function draw_hud()
   end
   for i=1,p.hp do
     sspr(9*8, 0, 3, 8, camera_x + 19 + (i * 3), camera_y + 8)
+  end
+
+  if frame < draw_text_frame_end then
+    rectfill(camera_x, camera_y + 56, camera_x + 128, camera_y + 72, 0)
+    print(draw_text_string, camera_x + 8, camera_y + 63, 1)
+    print(draw_text_string, camera_x + 8, camera_y + 62, 13)
+    flip()
+    flip()
   end
 end
 
